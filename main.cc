@@ -79,40 +79,30 @@ int main(int argc, char* argv[]) {
     iss >> sensor_type;
     if (sensor_type.compare("L") == 0) {
       // LASER MEASUREMENT
+      float x,y;
+      iss >> x; iss >> y; iss >> timestamp;
+
       sensor_reading.sensor_type = SensorType::LASER;
       sensor_reading.measurement = Measurement(2);
-      float x,y;
-      iss >> x;
-      iss >> y;
       sensor_reading.measurement << x, y;
-      iss >> timestamp;
       sensor_reading.timestamp = timestamp;
       sensor_readings.push_back(sensor_reading);
     } else if (sensor_type.compare("R") == 0) {
       // RADAR MEASUREMENT
+      float ro, phi, ro_dot;
+      iss >> ro; iss >> phi; iss >> ro_dot; iss >> timestamp;
+
       sensor_reading.sensor_type = SensorType::RADAR;
       sensor_reading.measurement = Measurement(3);
-      float ro;
-      float phi;
-      float ro_dot;
-      iss >> ro;
-      iss >> phi;
-      iss >> ro_dot;
       sensor_reading.measurement << ro, phi, ro_dot;
-      iss >> timestamp;
       sensor_reading.timestamp = timestamp;
       sensor_readings.push_back(sensor_reading);
     }
 
     // read ground truth data to compare later
-    float x_gt;
-    float y_gt;
-    float vx_gt;
-    float vy_gt;
-    iss >> x_gt;
-    iss >> y_gt;
-    iss >> vx_gt;
-    iss >> vy_gt;
+    float x_gt, y_gt, vx_gt, vy_gt;
+    iss >> x_gt; iss >> y_gt; iss >> vx_gt; iss >> vy_gt;
+
     ground_truth = GroundTruth(4);
     ground_truth << x_gt, y_gt, vx_gt, vy_gt;
     ground_truths.push_back(ground_truth);
