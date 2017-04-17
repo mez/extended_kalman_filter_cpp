@@ -4,8 +4,10 @@
 #include "libs/Eigen/Dense"
 
 typedef long long TimeStamp;
-typedef Eigen::VectorXd GroundTruth;
+typedef Eigen::Vector4d GroundTruth;
 typedef Eigen::VectorXd Measurement;
+typedef Eigen::Vector4d Estimate;
+typedef Eigen::Vector4d RMSE;
 
 enum SensorType{
   LASER,
