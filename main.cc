@@ -4,15 +4,17 @@
 #include <vector>
 #include <stdlib.h>
 #include "libs/Eigen/Dense"
-#include "measurement_packet.h"
 #include "utility.h"
 
 using namespace std;
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
-using std::vector;
+using utility::SensorReading;
+using utility::SensorType;
+using utility::GroundTruth;
+using utility::TimeStamp;
+using utility::Measurement;
+using utility::CheckArguments;
+using utility::CheckFiles;
 
-using namespace utility;
 
 int main(int argc, char* argv[]) {
 
@@ -26,14 +28,11 @@ int main(int argc, char* argv[]) {
 
   CheckFiles(in_file_, in_file_name_, out_file_, out_file_name_);
 
-  //Both SensorReading and GroundTruth come from measurement_packet.h
   vector<SensorReading> sensor_readings;
   vector<GroundTruth> ground_truths;
 
   string line;
 
-  // prep the measurement packages (each line represents a measurement at a
-  // timestamp)
   while (getline(in_file_, line)) {
 
     string sensor_type;
@@ -75,9 +74,8 @@ int main(int argc, char* argv[]) {
     ground_truths.push_back(ground_truth);
   }
 
-
   for(auto reading : sensor_readings) {
-    cout << "Sensor Reading: "<< ((reading.sensor_type == LASER) ? "LASER":"RADAR") << "\nmeasurement: \n" << reading.measurement << endl;
+    cout << "Sensor Reading: "<< ((reading.sensor_type == SensorType::LASER) ? "LASER":"RADAR") << "\nmeasurement: \n" << reading.measurement << endl;
   }
 
   // close files
