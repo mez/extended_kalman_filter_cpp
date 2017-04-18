@@ -3,7 +3,6 @@
 #include <sstream>
 #include <vector>
 #include <stdlib.h>
-#include "libs/Eigen/Dense"
 #include "utility.h"
 
 using namespace std;
@@ -34,11 +33,10 @@ int main(int argc, char* argv[]) {
   string line;
 
   while (getline(in_file_, line)) {
+    istringstream iss(line);
 
     string sensor_type;
     SensorReading sensor_reading;
-    GroundTruth ground_truth;
-    istringstream iss(line);
     TimeStamp timestamp;
 
     // reads first element from the current line
@@ -69,7 +67,7 @@ int main(int argc, char* argv[]) {
     float x_gt, y_gt, vx_gt, vy_gt;
     iss >> x_gt; iss >> y_gt; iss >> vx_gt; iss >> vy_gt;
 
-    ground_truth = GroundTruth(4);
+    GroundTruth ground_truth;
     ground_truth << x_gt, y_gt, vx_gt, vy_gt;
     ground_truths.push_back(ground_truth);
   }

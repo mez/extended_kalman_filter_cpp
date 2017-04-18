@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <math.h>
 #include "libs/Eigen/Dense"
 
 namespace utility
@@ -13,8 +14,6 @@ namespace utility
   typedef long long TimeStamp;
   typedef Eigen::Vector4d GroundTruth;
   typedef Eigen::VectorXd Measurement;
-  typedef Eigen::Vector4d Estimate;
-  typedef Eigen::Vector4d RMSE;
 
   enum SensorType{
     LASER,
@@ -29,9 +28,13 @@ namespace utility
 
   //RMSE return type is a just a typedef for a Vector4d
   //RMSE stands for Root Squared Mean Error
-  const RMSE CalculateRmse(const std::vector<Estimate> &estimations,
+  const Eigen::VectorXd CalculateRmse(const std::vector<Eigen::Vector4d> &estimations,
                            const std::vector<GroundTruth> &ground_truth);
 
+  const Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
+
+  const Eigen::VectorXd PolarToCartesian(const Eigen::VectorXd& polar_vector);
+  const Eigen::VectorXd CartesianToPolar(const Eigen::VectorXd& x_state);
 
   void CheckArguments(int argc, char* argv[]);
   void CheckFiles(std::ifstream& in_file, std::string& in_name,

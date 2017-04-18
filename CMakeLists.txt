@@ -6,6 +6,8 @@ add_definitions(-std=c++0x)
 
 set(SOURCES
     utility.cc
+    ekf.cc
+    fusion_ekf.cc
     main.cc
     )
 

@@ -2,6 +2,9 @@
 
 using namespace std;
 
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+
 namespace utility {
   void CheckArguments(int argc, char* argv[]) {
     std::string usage_instructions = "Usage instructions: ";
@@ -39,14 +42,87 @@ namespace utility {
     }
   }
 
-  //  Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
-  
-  const RMSE CalculateRmse(const std::vector<Estimate> &estimations,
-                     const std::vector<GroundTruth> &ground_truth) {
-    RMSE rmse(4);
+  const VectorXd CalculateRmse(const vector<VectorXd> &estimations,
+                         const vector<VectorXd> &ground_truth) {
+    VectorXd rmse;
     rmse << 0,0,0,0;
+    if (estimations.size() != ground_truth.size() || estimations.size() == 0) {
+          cerr << "The estimation vector size should equal ground truth\
+                        vector size. Also, the estimation vector size should\
+                        not be zero" <<endl;
+          return rmse;
+    }
+
+  	for(int i=0; i < estimations.size(); ++i){
+  		VectorXd residual = estimations[i] - ground_truth[i];
+  		residual = residual.array()*residual.array();
+
+  		rmse += residual;
+  	}
+
+  	rmse /= estimations.size();
+    rmse = rmse.array().sqrt();
 
     return rmse;
+  }
+
+  const MatrixXd CalculateJacobian(const VectorXd& x_state) {
+
+    MatrixXd Hj(3,4);
+    //recover state parameters
+    float px = x_state(0);
+    float py = x_state(1);
+    float vx = x_state(2);
+    float vy = x_state(3);
+
+    if (fabs(px) < 1e-4 and fabs(py) < 1e-4){
+  	  px =  1e-4;
+  	  py =  1e-4;
+    }
+
+    //pre-compute a set of terms to avoid repeated calculation
+    float c1 = px*px+py*py;
+    float c2 = sqrt(c1);
+    float c3 = (c1*c2);
+
+    //check division by zero
+    if(fabs(c1) < 1e-4){
+      cerr << "CalculateJacobian () - Error - Division by Zero" << endl;
+      c1 = 1e-6;
+    }
+
+    //compute the Jacobian matrix
+    Hj << (px/c2), (py/c2), 0, 0,
+        -(py/c1), (px/c1), 0, 0,
+        py*(vx*py - vy*px)/c3, px*(px*vy - py*vx)/c3, px/c2, py/c2;
+
+    return Hj;
+  }
+
+  const VectorXd PolarToCartesian(const VectorXd& polar_vector) {
+    VectorXd cart_vector(4);
+
+    float rho = polar_vector(0);
+    float phi = polar_vector(1);
+    float rho_dot = polar_vector(2);
+
+    cart_vector << rho * cos(phi), rho * sin(phi),
+                   rho_dot * cos(phi), rho_dot * sin(phi);
+    return cart_vector;
+  }
+
+  const Eigen::VectorXd CartesianToPolar(const Eigen::VectorXd& x_state) {
+    VectorXd polar_vector(3);
+
+    float x = x_state(0);
+    float y = x_state(1);
+    float vx = x_state(2);
+    float vy = x_state(3);
+
+    float rho = sqrt(x*x + y*y);
+
+    polar_vector << rho , atan2(y,x), (x*vx + y*vy)/rho;
+    return polar_vector;
   }
 
 };
