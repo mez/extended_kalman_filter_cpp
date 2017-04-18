@@ -27,6 +27,7 @@ class ExtendedKalmanFilter {
    //4x4 Identity matrix we will need later.
    Eigen::MatrixXd I_ = Eigen::MatrixXd::Identity(4, 4);
 
+   ExtendedKalmanFilter();
   /**
    * Prediction Predicts the state and the state covariance
    * using the process model

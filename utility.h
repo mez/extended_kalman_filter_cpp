@@ -32,7 +32,6 @@ namespace utility
                            const std::vector<GroundTruth> &ground_truth);
 
   const Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
-
   const Eigen::VectorXd PolarToCartesian(const Eigen::VectorXd& polar_vector);
   const Eigen::VectorXd CartesianToPolar(const Eigen::VectorXd& x_state);
 

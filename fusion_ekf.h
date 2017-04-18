@@ -24,7 +24,7 @@ class FusionEkf {
 
   Eigen::MatrixXd R_radar_;
   Eigen::MatrixXd Hj_;
-  
+
   //since this is a constant velocity model. we add the accel as noise.
   float noise_ax;
   float noise_ay;
