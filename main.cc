@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdlib.h>
 #include "utility.h"
+#include "fusion_ekf.h"
 
 using namespace std;
 using utility::SensorReading;
@@ -13,7 +14,8 @@ using utility::TimeStamp;
 using utility::Measurement;
 using utility::CheckArguments;
 using utility::CheckFiles;
-
+using utility::CalculateRmse;
+using Eigen::VectorXd;
 
 int main(int argc, char* argv[]) {
 
@@ -67,14 +69,54 @@ int main(int argc, char* argv[]) {
     float x_gt, y_gt, vx_gt, vy_gt;
     iss >> x_gt; iss >> y_gt; iss >> vx_gt; iss >> vy_gt;
 
-    GroundTruth ground_truth;
+    GroundTruth ground_truth(4);
     ground_truth << x_gt, y_gt, vx_gt, vy_gt;
     ground_truths.push_back(ground_truth);
   }
 
-  for(auto reading : sensor_readings) {
-    cout << "Sensor Reading: "<< ((reading.sensor_type == SensorType::LASER) ? "LASER":"RADAR") << "\nmeasurement: \n" << reading.measurement << endl;
+
+  FusionEkf fusion_ekf_;
+  vector<VectorXd> estimations;
+
+  size_t N = sensor_readings.size();
+  for (size_t k = 0; k < N; ++k) {
+    SensorReading reading = sensor_readings[k];
+    fusion_ekf_.ProcessMeasurement(reading);
+
+    // output the estimation
+    VectorXd x_ = fusion_ekf_.CurrentEstimate();
+
+    out_file_ << x_(0) << "\t";
+    out_file_ << x_(1) << "\t";
+    out_file_ << x_(2) << "\t";
+    out_file_ << x_(3) << "\t";
+
+
+    if (reading.sensor_type == SensorType::LASER) {
+
+      out_file_ << reading.measurement(0) << "\t";
+      out_file_ << reading.measurement(1) << "\t";
+    } else if (reading.sensor_type == SensorType::RADAR) {
+
+      float ro = reading.measurement(0);
+      float phi = reading.measurement(1);
+      out_file_ << ro * cos(phi) << "\t"; // p1_meas
+      out_file_ << ro * sin(phi) << "\t"; // ps_meas
+    }
+
+    // output the ground truth packages
+    GroundTruth ground_truth = ground_truths[k];
+    out_file_ << ground_truth(0) << "\t";
+    out_file_ << ground_truth(1) << "\t";
+    out_file_ << ground_truth(2) << "\t";
+    out_file_ << ground_truth(3) << "\n";
+
+    estimations.push_back(x_);
   }
+
+  // compute the accuracy (RMSE)
+  cout << "Accuracy - RMSE:" << endl << CalculateRmse(estimations, ground_truths) << endl;
+
 
   // close files
   if (out_file_.is_open()) {

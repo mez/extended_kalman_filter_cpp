@@ -3,6 +3,7 @@
 //This EKF fusion handles a CV model hence the state vector will be 4D.
 // [px, py, vx, vy] we denote this by the typedef utility::Estimate
 
+#include <iostream>
 #include "libs/Eigen/Dense"
 #include "ekf.h"
 #include "utility.h"
@@ -12,6 +13,7 @@ class FusionEkf {
  public:
   FusionEkf();
   void ProcessMeasurement(utility::SensorReading& reading);
+  Eigen::VectorXd& CurrentEstimate();
 
  private:
   bool is_initialized_;

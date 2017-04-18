@@ -43,8 +43,9 @@ namespace utility {
   }
 
   const VectorXd CalculateRmse(const vector<VectorXd> &estimations,
-                         const vector<VectorXd> &ground_truth) {
-    VectorXd rmse;
+                               const vector<VectorXd> &ground_truth) {
+
+    VectorXd rmse(4);
     rmse << 0,0,0,0;
     if (estimations.size() != ground_truth.size() || estimations.size() == 0) {
           cerr << "The estimation vector size should equal ground truth\
@@ -68,17 +69,13 @@ namespace utility {
 
   const MatrixXd CalculateJacobian(const VectorXd& x_state) {
 
-    MatrixXd Hj(3,4);
+    MatrixXd Hj = MatrixXd::Zero(3, 4);
+
     //recover state parameters
     float px = x_state(0);
     float py = x_state(1);
     float vx = x_state(2);
     float vy = x_state(3);
-
-    if (fabs(px) < 1e-4 and fabs(py) < 1e-4){
-  	  px =  1e-4;
-  	  py =  1e-4;
-    }
 
     //pre-compute a set of terms to avoid repeated calculation
     float c1 = px*px+py*py;
@@ -87,8 +84,8 @@ namespace utility {
 
     //check division by zero
     if(fabs(c1) < 1e-4){
-      cerr << "CalculateJacobian () - Error - Division by Zero" << endl;
-      c1 = 1e-6;
+      cout << "CalculateJacobian () - Error - Division by Zero" << endl;
+      return Hj;
     }
 
     //compute the Jacobian matrix
