@@ -6,6 +6,18 @@ An Extended Kalman Filter (that uses a constant velocity model) in C++. This EKF
 ** [Extended Kalman Filter Python](https://github.com/mez/extended_kalman_filter_python) **
 ---
 
+### Data log input file format
+
+```
+#L(for laser) meas_px meas_py timestamp gt_px gt_py gt_vx gt_vy
+#R(for radar) meas_rho meas_phi meas_rho_dot timestamp gt_px gt_py gt_vx gt_vy
+
+Example:
+R	8.60363	0.0290616	-2.99903	1477010443399637	8.6	0.25	-3.00029	0
+L	8.45	0.25	1477010443349642	8.45	0.25	-3.00027	0
+```
+
+
 ## Dependencies
 
 * cmake >= 3.5
@@ -28,9 +40,3 @@ An Extended Kalman Filter (that uses a constant velocity model) in C++. This EKF
 4. Run it: `./ExtendedKF path/to/input.txt path/to/output.txt`. You can find
    some sample inputs in 'data/'.
     - eg. `./ExtendedKF ../data/sample-laser-radar-measurement-data-1.txt output.txt`
-
-## Generating Additional Data (optional)
-
-If you'd like to generate your own radar and lidar data, see the
-[utilities repo](https://github.com/udacity/CarND-Mercedes-SF-Utilities) for
-Matlab scripts that can generate additional data.
