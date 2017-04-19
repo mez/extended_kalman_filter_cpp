@@ -2,31 +2,25 @@
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-
-ExtendedKalmanFilter::ExtendedKalmanFilter() {
-  //setup efk F
-  F_ = MatrixXd(4, 4);
-  F_ << 1, 0, 1, 0,
-        0, 1, 0, 1,
-        0, 0, 1, 0,
-        0, 0, 0, 1;
-
-  //setup efk P
-  P_ = MatrixXd(4, 4);
-  P_ << 1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1000, 0,
-        0, 0, 0, 1000;
-}
+using utility::CartesianToPolar;
 
 void ExtendedKalmanFilter::Predict() {
   x_ = F_ * x_ ;
   P_ = F_ * P_ * F_.transpose() + Q_;
 }
 
-void ExtendedKalmanFilter::Update(const VectorXd &z, const VectorXd& Hx) {
-  VectorXd y = z - Hx; // error calculation
+void ExtendedKalmanFilter::Update(const VectorXd &z) {
+  VectorXd y = z - H_ * x_; // error calculation
+  CallRestOfUpdate(y);
+}
 
+void ExtendedKalmanFilter::UpdateEkf(const VectorXd &z) {
+  VectorXd hx = CartesianToPolar(x_);
+  VectorXd y = z - hx;
+  CallRestOfUpdate(y);
+}
+
+void ExtendedKalmanFilter::CallRestOfUpdate(const VectorXd &y) {
   MatrixXd Ht = H_.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd K =  P_ * Ht * S.inverse();

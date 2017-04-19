@@ -25,9 +25,8 @@ class ExtendedKalmanFilter {
    Eigen::MatrixXd R_;
 
    //4x4 Identity matrix we will need later.
-   Eigen::MatrixXd I_ = Eigen::MatrixXd::Identity(4, 4);
+   Eigen::MatrixXd I_;
 
-   ExtendedKalmanFilter();
   /**
    * Prediction Predicts the state and the state covariance
    * using the process model
@@ -39,7 +38,12 @@ class ExtendedKalmanFilter {
    * Updates the state by using standard Kalman Filter equations
    * @param z The measurement at k+1
    */
-  void Update(const Eigen::VectorXd &z, const Eigen::VectorXd& Hx);
+  void Update(const Eigen::VectorXd &z);
+  void UpdateEkf(const Eigen::VectorXd &z);
+
+ private:
+  //Keep things DRY
+  void CallRestOfUpdate(const Eigen::VectorXd &z);
 };
 
 #endif

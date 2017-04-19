@@ -9,28 +9,19 @@
 
 namespace utility
 {
-  //These typedefs make it a cleaner API for the rest of the codebase
-  //Incase we ever decide to change representation in the future.
-  using TimeStamp   = long long ;
-  using GroundTruth = Eigen::VectorXd;
-  using Measurement = Eigen::VectorXd;
-
   enum SensorType{
     LASER,
     RADAR
   };
 
   struct SensorReading {
-    TimeStamp timestamp;
+    long long timestamp;
     SensorType sensor_type;
-    Measurement measurement;
+    Eigen::VectorXd measurement;
   };
 
-  //RMSE return type is a just a typedef for a Vector4d
-  //RMSE stands for Root Squared Mean Error
   const Eigen::VectorXd CalculateRmse(const std::vector<Eigen::VectorXd> &estimations,
-                                      const std::vector<GroundTruth> &ground_truth);
-
+                                      const std::vector<Eigen::VectorXd> &ground_truth);
   const Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
   const Eigen::VectorXd PolarToCartesian(const Eigen::VectorXd& polar_vector);
   const Eigen::VectorXd CartesianToPolar(const Eigen::VectorXd& x_state);

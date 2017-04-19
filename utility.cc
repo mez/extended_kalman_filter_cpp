@@ -84,7 +84,6 @@ namespace utility {
 
     //check division by zero
     if(fabs(c1) < 1e-4){
-      cout << "CalculateJacobian () - Error - Division by Zero" << endl;
       return Hj;
     }
 
@@ -103,8 +102,12 @@ namespace utility {
     float phi = polar_vector(1);
     float rho_dot = polar_vector(2);
 
-    cart_vector << rho * cos(phi), rho * sin(phi),
-                   rho_dot * cos(phi), rho_dot * sin(phi);
+    float x  = rho * cos(phi);
+    float y  = rho * sin(phi);
+    float vx = rho_dot * cos(phi);
+    float vy = rho_dot * sin(phi);
+
+    cart_vector << x, y, vx, vy;
     return cart_vector;
   }
 
@@ -117,8 +120,10 @@ namespace utility {
     float vy = x_state(3);
 
     float rho = sqrt(x*x + y*y);
+    float phi = atan2(y,x);
+    float rho_dot = (x*vx + y*vy)/rho;
 
-    polar_vector << rho , atan2(y,x), (x*vx + y*vy)/rho;
+    polar_vector << rho ,phi, rho_dot;
     return polar_vector;
   }
 
