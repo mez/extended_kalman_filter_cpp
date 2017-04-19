@@ -2,6 +2,8 @@
 
 An Extended Kalman Filter (that uses a constant velocity model) in C++. This EKF fuses LIDAR and RADAR sensor readings to estimate location (x,y) and velocity (vx, vy).
 
+### Check out the Python version
+** [Extended Kalman Filter Python](https://github.com/mez/extended_kalman_filter_python)
 ---
 
 ## Dependencies
