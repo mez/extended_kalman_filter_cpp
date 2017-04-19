@@ -106,8 +106,11 @@ void FusionEkf::ProcessMeasurement(SensorReading& reading) {
   //We update the F and Q matrices using dt
   UpdateFQ(dt);
 
-  //Make Prediction
-  ekf_.Predict();
+  //Make Prediction only if we the dt is big enough.
+  if ( dt > 1e-3 )
+  {
+     ekf_.Predict();
+  }
 
   switch (reading.sensor_type) {
     case SensorType::RADAR:

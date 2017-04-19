@@ -119,6 +119,11 @@ namespace utility {
     float vx = x_state(2);
     float vy = x_state(3);
 
+    if (fabs(x+y) < 1e-4) {
+      x = 1e-4;
+      y = 1e-4;
+    }
+
     float rho = sqrt(x*x + y*y);
     float phi = atan2(y,x);
     float rho_dot = (x*vx + y*vy)/rho;

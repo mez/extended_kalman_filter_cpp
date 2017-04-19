@@ -22,8 +22,9 @@ void ExtendedKalmanFilter::UpdateEkf(const VectorXd &z) {
 
 void ExtendedKalmanFilter::CallRestOfUpdate(const VectorXd &y) {
   MatrixXd Ht = H_.transpose();
-  MatrixXd S = H_ * P_ * Ht + R_;
-  MatrixXd K =  P_ * Ht * S.inverse();
+  MatrixXd PHt =  P_ * Ht;
+  MatrixXd S = H_ * PHt + R_;
+  MatrixXd K =  PHt * S.inverse();
 
   // New state
   x_ = x_ + (K * y);
